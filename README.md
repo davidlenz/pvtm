@@ -66,6 +66,24 @@ pvtm.fit(vector_size = 100, # dimensionality of the feature vectors (Doc2Vec)
          n_init = 1, # number of initializations (GMM)
          )
 ```
+`pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
+`pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
 
+<h3 align="center">Assignment of new documents to resulted topics</h3>
 
+You can easily assign a new document to the resulted topics by applying `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) methods as shown below:  
+
+```python
+newsgroups_test = fetch_20newsgroups(subset='test')
+new_vector = pvtm.get_string_vector([clean(newsgroups_test.data[0])]) 
+pvtm.get_topic_weights(new_vector)
+```
+
+which returns:
+
+```text
+array([[0.00000000e+000, 0.00000000e+000, 1.00000000e+000,
+        1.84225907e-205, 1.22467656e-295, 0.00000000e+000,
+        8.38595730e-074, 3.69712009e-054, 0.00000000e+000]])
+```
 

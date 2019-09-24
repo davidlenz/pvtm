@@ -97,5 +97,4 @@ python ".../path to the example file/20_newsgroups_with_dash.py"
 
 and view all results in your browser: 
 
-
-
+<img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_demo.gif" width="600" height="400" />

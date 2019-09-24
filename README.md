@@ -43,7 +43,7 @@ nltk.download("stopwords")
 stop_words = list(set(stopwords.words('english')))
 pvtm = PVTM(input_texts, lemmatized = True, min_df = 0.05, max_df = 0.5, stopwords = stop_words)
 ```
-<h3 align="center">Fitting the models</h3>
+<h2 align="center">Fitting the models</h3>
 
 The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the parameters needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameter see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
@@ -86,4 +86,16 @@ array([[0.00000000e+000, 0.00000000e+000, 1.00000000e+000,
         1.84225907e-205, 1.22467656e-295, 0.00000000e+000,
         8.38595730e-074, 3.69712009e-054, 0.00000000e+000]])
 ```
+
+<h2 align="center">Example with dash app</h2>
+
+You can also run the [example](example/20_newsgroups_with_dash.py) described above with a dash app extension 
+
+```
+python ".../path to the example file/20_newsgroups_with_dash.py"
+```
+
+and view all results in your browser: 
+
+
 

@@ -142,8 +142,8 @@ class PVTM(Documents):
         # generate doc2vec model
         self.model = gensim.models.Doc2Vec(self.x_docs,**{key: value for key, value in kwargs.items()
                                               if key in inspect.getfullargspec(gensim.models.Doc2Vec).args or
-                                                         key in inspect.getfullargspec(gensim.models.base_any2vec.BaseAny2VecModel).args} or
-                                           key in inspect.getfullargspec(gensim.models.base_any2vec.BaseWordEmbeddingsModel).args)
+                                                 key in inspect.getfullargspec(gensim.models.base_any2vec.BaseAny2VecModel).args} or
+                                                 key in inspect.getfullargspec(gensim.models.base_any2vec.BaseWordEmbeddingsModel).args)
 
 
         print('Start clustering..')
@@ -158,42 +158,9 @@ class PVTM(Documents):
         self.cluster_center = self.gmm.means_
         print('BIC: {}'.format(self.BIC))
 
-        # self.cluster_center(np.array(self.model.docvecs.vectors_docs), self.gmm)
-        # we can also cross out document_vectors and document_topics
-        self.document_vectors = np.array(self.model.docvecs.vectors_docs)
-        self.document_topics = np.array(self.gmm.predict_proba(self.document_vectors))
-
         self.get_document_topics()
-        # the name of the last function is also most_similar_words_per_topic, there this data frame should be renamed
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
-    # function cluster_center is not used as we replaced it with gmm.means_, so it should be crossed out
-    def cluster_center(self, vectors, gmm):
-        """
-        Approximates cluster centers for a given clustering from a GMM.
-        First method only takes the topic with the highest probability per document into account.
-        Averaging the document vectors per topic cluster provides the cluster center for the topic.
-        Second method  approximates cluster centers for a given clustering 
-        from a GMM with weighted single vectors from a certain topic.
-        Returns two lists of the cluster centers.
-        """
-        self.clustercenter = []
-        assignments = gmm.predict(vectors)
-        n_components = np.unique(assignments).shape[0]
-        for i in range(n_components):
-            gmm_centerindexe = np.where(assignments == i, True, False)
-            self.clustercenter.append(vectors[gmm_centerindexe].mean(0))
-
-        self.clustercenter_probas = []
-        print('vectors', vectors.shape)
-        assignments_proba = gmm.predict_proba(vectors)
-        n_components = assignments_proba.shape[1]
-        for i in range(n_components):
-            center = []
-            for j in range(len(vectors)):
-                center_j = vectors[j] * assignments_proba[j, i]
-                center.append(center_j)
-            self.clustercenter_probas.append(np.mean(center, axis=0))
 
     def get_string_vector(self, strings, steps=10):
         '''
@@ -213,7 +180,7 @@ class PVTM(Documents):
         :return: probability distribution of the vector over all topics
         '''
         return self.gmm.predict_proba(vector)
-    ## the functions create_wordcloud_by_topic and similarity_wordcloud are the same!
+
     def create_wordcloud_by_topic(self, topic, n_words=100):
         '''
         :param topic: number of a topic
@@ -225,32 +192,11 @@ class PVTM(Documents):
                             columns=['word', "similarity"]).word.values
         text = ', '.join(text)
         wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(7, 4))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
         return wordcloud
         plt.show()
-        #plt.savefig(f"results/{modelname}/sim_{topic}.pdf", bbox_inches="tight")
-        #plt.savefig(f"results/{modelname}/sim_{topic}.png", bbox_inches="tight")
-        #plt.close()
-
-
-    def similarity_wordcloud(self, topic, n_words=100):
-        '''
-        Wordcloud of the most similar words (the nearest to the topic center) to the selected topic.
-        :param topic: number of topic
-        :param n_words: number of words to be shown in a wordcloud
-        :return: a wordcloud with similar words to the selected topic
-        '''
-        text = pd.DataFrame(self.model.wv.similar_by_vector(self.cluster_center[topic],
-                                                            topn=100),
-                            columns=['word', "similarity"]).word.values
-        text = ', '.join(text)
-        wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-        fig, ax = plt.subplots( figsize=(7, 4))
-        ax.imshow(wordcloud, interpolation="bilinear", )
-        ax.axis("off")
-
 
     def get_document_topics(self):
         '''

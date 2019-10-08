@@ -82,7 +82,8 @@ pvtm.fit(vector_size = 100, # dimensionality of the feature vectors (Doc2Vec)
 
 If you get the following warning message while fitting the model:
 
-<blockqoute>  :warning: UserWarning: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."</blockquote>
+|:warning: **User Warning**: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."|
+| --- |
 
 just run:
 

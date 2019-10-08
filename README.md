@@ -23,13 +23,23 @@ pip install pvtm
 <h3 align="center">Importing & Preprocessing documents</h3>
 
 Once you have installed the **pvtm** module, you can conduct analysis on your text documents stored in a *.txt* or *.csv* file.
-The example below considers [20 newsgroups dataset](https://scikit-learn.org/0.19/datasets/twenty_newsgroups.html) from `sklearn.datasets`.
+The example below considers [reuters dataset](https://keras.io/datasets/#reuters-newswire-topics-classification) from `keras.datasets`.
 
 ```python
-from sklearn.datasets import fetch_20newsgroups
+from keras.datasets import reuters
+from sklearn.model_selection import train_test_split
+import numpy as np
+# load reuters text data
+def reuters_news_wire_texts():
+    (x_train, y_train), (x_test, y_test) = reuters.load_data()
+    wordDict = {y:x for x,y in reuters.get_word_index().items()}
+    texts = []
+    for x in x_train:
+        texts.append(" ".join([wordDict.get(index-3) for index in x if wordDict.get(index-3) is not None]))
+    return texts, y_train
 
-newsgroups_train = fetch_20newsgroups(subset='train')
-input_texts = newsgroups_train.data
+input_texts, y = reuters_news_wire_texts()
+texts_train, texts_test = train_test_split(input_texts, test_size=0.2, random_state=42)
 ```
 After that, `PVTM` object should be created with the defined input texts.
 Parameter `lemmatized` should be set to `False` when documents' texts should be lemmatized. However, take into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. 
@@ -38,10 +48,13 @@ With the parameters `min_df` and `max_df` you set the thresholds for very rare/c
 
 ```python
 from pvtm.pvtm import PVTM
+from pvtm.pvtm import clean
+# Load stopwords from nltk library
 import nltk
 nltk.download("stopwords")
 stop_words = list(set(stopwords.words('english')))
-pvtm = PVTM(input_texts, lemmatized = True, min_df = 0.05, max_df = 0.5, stopwords = stop_words)
+# Create PVTM class object
+pvtm = PVTM(texts_train, lemmatized = True, min_df = 0.005, max_df = 0.65, stopwords = stop_words)
 ```
 <h2 align="center">Fitting the models</h3>
 
@@ -60,12 +73,23 @@ pvtm.fit(vector_size = 100, # dimensionality of the feature vectors (Doc2Vec)
          alpha = 0.025, # initial learning rate (Doc2Vec)
          min_alpha = 0.025, # doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses.
          #random_state = 123, # random seed (GMM)
-         n_components = 20, # number of Gaussian mixture components, i.e. Topics (GMM)
+         n_components = 5, # number of Gaussian mixture components, i.e. Topics (GMM)
          covariance_type = 'diag', # covariance type (GMM)
          verbose = 1, # verbosity (GMM)
          n_init = 1, # number of initializations (GMM)
          )
 ```
+
+If you get the following warning message while fitting the model:
+
+<blockqoute>  :warning: UserWarning: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."</blockquote>
+
+just run:
+
+```
+conda install -c conda-forge gensim
+```
+
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
 `pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
 
@@ -74,27 +98,25 @@ pvtm.fit(vector_size = 100, # dimensionality of the feature vectors (Doc2Vec)
 You can easily assign a new document to the resulted topics by applying `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) methods as shown below:  
 
 ```python
-newsgroups_test = fetch_20newsgroups(subset='test')
-new_vector = pvtm.get_string_vector([clean(newsgroups_test.data[0])]) 
+new_text = texts_test
+new_vector = pvtm.get_string_vector([clean(new_text)])
 pvtm.get_topic_weights(new_vector)
 ```
 
 which returns:
 
 ```text
-array([[0.00000000e+000, 0.00000000e+000, 1.00000000e+000,
-        1.84225907e-205, 1.22467656e-295, 0.00000000e+000,
-        8.38595730e-074, 3.69712009e-054, 0.00000000e+000]])
+array([[0., 0., 0., 1., 0.]])
 ```
 
 <h2 align="center">Example with dash app</h2>
 
-You can also run the [example](example/20_newsgroups_with_dash.py) described above with a dash app extension 
+You can also run the [example](example/reuters_with_dash.py) described above with a dash app extension 
 
 ```
-python ".../path to the example file/20_newsgroups_with_dash.py"
+python ".../path to the example file/reuters_with_dash.py"
 ```
 
 and view all results in your browser: 
 
-<img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_demo.gif" width="600" height="400" />
+<img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />

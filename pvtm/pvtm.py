@@ -89,15 +89,16 @@ class PVTM(Documents):
                 pp.append(" ".join(rare_removed))
         return pp, vocabulary
 
-    def lemmatize(self, texts):
+    def lemmatize(self, texts, lang='en'):
         '''
         Lemmatization of input texts.
         :param texts: original documents
+        :param lang: language of the text documents
         :return: lemmmatized texts
         '''
         print('Start lemmatization...')
         t0 = time.time()
-        nlp = spacy.load('de')
+        nlp = spacy.load(lang + "_core_web_sm")
         nlp.disable_pipes('tagger', 'ner')
         doclist = list(nlp.pipe(texts, n_threads=6, batch_size=500))
         texts = [' '.join([listitem.lemma_ for listitem in doc]) for i, doc in enumerate(doclist)]

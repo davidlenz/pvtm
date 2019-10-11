@@ -71,7 +71,7 @@ class PVTM(Documents):
         Prefiltering function which removes very rare/common words.
         :param data: a list of strings(documents)
         :param min_df: words are ignored if the frequency is lower than min_df
-        :param max_df: words are ignored if the frequency is higher than min_df
+        :param max_df: words are ignored if the frequency is higher than max_df
         :param stopwords: a list of stopwords.
         :return: filtered documents' texts and corpus specific vocabulary
         '''
@@ -224,6 +224,88 @@ class PVTM(Documents):
         sims = np.argsort(sims)[0][::-1]
         text = [self.model.wv.index2word[k] for k in sims[:n_words]]
         return text
+
+    def search_topic_by_term(self, term, variant='sim', method=1, n_words=50):
+        '''
+        This function returns topic number and a wordcloud which represent defined search terms.
+        :param term: a list with search terms, e.g. ['market','money']
+        :param variant: if there is only one search term, there two variants to find a representative topic/wordcloud.
+        if 'sim' is chosen the term is searched for among all the words that are nearest to the single topic centers.
+        If 'count' is chosen only words from the texts which were assigned to the single topics are considered.
+        :param method: if there are multiple search terms, three different methods can be used to find a representative
+        wordcloud. Method '1' considers all the search terms as a single text and the process is simple to assigning
+        new documents with .get_string_vector and .get_topic_weights. Method '2' also considers all the search terms as
+        a single text and searches for the most similar documents and topics these similar documents were assigned to.
+        Third method transforms single search terms into word vectors and considers cosine similarity between each word
+        vector and topic centers.
+        :param n_words: number of words to be shown in a wordcloud.
+        :return: best matching topic and a wordcloud.
+        '''
+        if len(term) == 1:
+            if variant == "sim":
+                matches = self.top_topic_center_words[self.top_topic_center_words == term[0]]
+                best_matching_topic = pd.DataFrame(list(matches.stack().index)).sort_values(1).iloc[0][0]
+                text = self.top_topic_center_words.loc[best_matching_topic].values
+                text = " ".join(text)
+            elif variant == "count":
+                matches = self.topic_words[self.topic_words == term[0]]
+                best_matching_topic = pd.DataFrame(list(matches.stack().index)).sort_values(1).iloc[0][0]
+                text = self.wordcloud_df.loc[best_matching_topic]
+            print("best_matching_topic", best_matching_topic)
+            wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
+            fig, ax = plt.subplots()
+            ax.imshow(wordcloud, interpolation="bilinear", )
+            ax.axis("off")
+            plt.show()
+        elif len(term) > 1:
+            if method == 1:
+                string = ' '.join(term)
+                vector = np.array(self.get_string_vector([string]))
+                best_matching_topic = self.gmm.predict(vector)[0]
+                text = self.wordcloud_df.loc[best_matching_topic]
+                print("best_matching_topic", best_matching_topic)
+                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
+                fig, ax = plt.subplots()
+                ax.imshow(wordcloud, interpolation="bilinear", )
+                ax.axis("off")
+                plt.show()
+            elif method == 2:
+                string = ' '.join(term)
+                vector = np.array(self.get_string_vector([string]))
+                docs_num = [self.model.docvecs.most_similar(positive=[np.array(vector).reshape(-1, )], topn=10)[i][0]
+                            for i in range(10)]
+                document_topics = np.array(self.gmm.predict(np.array(self.model.docvecs.vectors_docs)))
+                unique, counts = np.unique(document_topics[docs_num], return_counts=True)
+                top_topics = np.asarray((unique, counts)).T
+                df = pd.DataFrame(top_topics).sort_values(by=1, ascending=False)
+                df.columns = ['topic', 'frequency']
+                best_matching_topic = df.iloc[0, 0]
+                text = self.wordcloud_df.loc[best_matching_topic]
+                print("best_matching_topic", best_matching_topic)
+                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
+                fig, ax = plt.subplots()
+                ax.imshow(wordcloud, interpolation="bilinear", )
+                ax.axis("off")
+                plt.show()
+            elif method == 3:
+                vectors = [self.get_string_vector([term[i]]) for i in range(len(term))]
+                terms_df = pd.DataFrame({'topic': range(self.gmm.n_components)})
+                for i in range(len(term)):
+                    sims = [cosine_similarity([self.cluster_center[j]], vectors[i]) for j in
+                            range(self.gmm.n_components)]
+                    sims = [j for i in sims for j in i]
+                    sims = [sims[i][0] for i in range(len(sims))]
+                    terms_df[term[i]] = sims
+                topics = [np.argsort(terms_df[term[i]].values)[::-1][0] for i in range(len(term))]
+                s = pd.Series(topics)
+                best_matching_topic = s.value_counts().index[0]
+                text = self.wordcloud_df.loc[best_matching_topic]
+                print("best_matching_topic", best_matching_topic)
+                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
+                fig, ax = plt.subplots()
+                ax.imshow(wordcloud, interpolation="bilinear", )
+                ax.axis("off")
+                plt.show()
 
 
 

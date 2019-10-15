@@ -21,12 +21,12 @@ import inspect
 
 import spacy
 
-
-clean = lambda x: re.sub("[^abcdefghijklmnopqrstuvwxyzäöüß& ']", '', str(x).lower()).strip()
+clean = lambda x: re.sub("[^a-zäöüß& ']", '', str(x).lower()).strip()
 
 
 class Documents(object):
     """
+
     """
 
     def __init__(self, documents):
@@ -46,6 +46,27 @@ class PVTM(Documents):
         x = [kk.split() for kk in texts]
         self.documents = texts
         self.x_docs = Documents(x)
+
+    def preprocess(self, texts, lemmatized, **kwargs):
+        '''
+        The function takes a list of texts and removes stopwords, special characters, punctuation as well
+        as very frequent and very unfrequent words.
+        :param texts: original documents
+        :param lemmatized: if lemmatized=False, lemmatization of the texts will be done.
+        :param kwargs: additional key word arguments passed to popularity_based_prefiltering() function
+        :return: cleaned texts
+        '''
+
+        texts = [clean(x) for x in texts]
+
+        if not lemmatized:
+            texts = self.lemmatize(texts)
+
+        cleaned_text, self.vocab = self.popularity_based_prefiltering(texts,
+                                                                      **{key: value for key, value in kwargs.items()
+                                                                         if key in inspect.getfullargspec(
+                                                                              self.popularity_based_prefiltering).args})
+        return cleaned_text
 
     def get_allowed_vocab(self, data, min_df=0.05, max_df=0.95):
         '''
@@ -113,46 +134,28 @@ class PVTM(Documents):
         print('len(texts)', len(texts))
         return texts
 
-    def preprocess(self, texts, lemmatized, **kwargs):
-        '''
-        The function takes a list of texts and removes stopwords, special characters, punctuation as well
-        as very frequent and very unfrequent words.
-        :param texts: original documents
-        :param lemmatized: if lemmatized=False, lemmatization of the texts will be done.
-        :param kwargs: additional key word arguments passed to popularity_based_prefiltering() function
-        :return: cleaned texts
-        '''
-
-        texts = [clean(x) for x in texts]
-
-        if not lemmatized:
-            texts = self.lemmatize(texts)
-
-        cleaned_text, self.vocab = self.popularity_based_prefiltering(texts,
-                                                                      **{key: value for key, value in kwargs.items()
-                                                                         if key in inspect.getfullargspec(
-                                                                              self.popularity_based_prefiltering).args})
-        return cleaned_text
-
-    def fit(self,  **kwargs):
+    def fit(self, **kwargs):
         '''
         First, a Doc2Vec model ist trained and clustering of the documents is done by means of
         :param kwargs:
         :return: Doc2Vec model and GMM clusters
         '''
         # generate doc2vec model
-        self.model = gensim.models.Doc2Vec(self.x_docs,**{key: value for key, value in kwargs.items()
-                                              if key in inspect.getfullargspec(gensim.models.Doc2Vec).args or
-                                                 key in inspect.getfullargspec(gensim.models.base_any2vec.BaseAny2VecModel).args} or
-                                                 key in inspect.getfullargspec(gensim.models.base_any2vec.BaseWordEmbeddingsModel).args)
-
+        self.model = gensim.models.Doc2Vec(self.x_docs, **{key: value for key, value in kwargs.items()
+                                                           if
+                                                           key in inspect.getfullargspec(gensim.models.Doc2Vec).args or
+                                                           key in inspect.getfullargspec(
+                                                               gensim.models.base_any2vec.BaseAny2VecModel).args} or
+                                                          key in inspect.getfullargspec(
+            gensim.models.base_any2vec.BaseWordEmbeddingsModel).args)
 
         print('Start clustering..')
         self.gmm = mixture.GaussianMixture(random_state=1, **{key: value for key, value in kwargs.items()
-                                                              if key in inspect.getfullargspec(mixture.GaussianMixture).args})
+                                                              if key in inspect.getfullargspec(
+                mixture.GaussianMixture).args})
         print('Finished clustering.')
 
-        self.doc_vectors = np.array(self.model.docvecs.vectors_docs) # ist dasselbe wie unten self.document_vectors
+        self.doc_vectors = np.array(self.model.docvecs.vectors_docs)  # ist dasselbe wie unten self.document_vectors
 
         self.gmm.fit(self.doc_vectors)
         self.BIC = self.gmm.bic(self.doc_vectors)
@@ -182,7 +185,7 @@ class PVTM(Documents):
         '''
         return self.gmm.predict_proba(vector)
 
-    def create_wordcloud_by_topic(self, topic, n_words=100):
+    def wordcloud_by_topic(self, topic, n_words=100):
         '''
         :param topic: number of a topic
         :param n_words: number of words to be shown in a wordcloud
@@ -196,8 +199,8 @@ class PVTM(Documents):
         fig, ax = plt.subplots(figsize=(7, 4))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
-        return wordcloud
         plt.show()
+        return wordcloud
 
     def get_document_topics(self):
         '''
@@ -225,7 +228,7 @@ class PVTM(Documents):
         text = [self.model.wv.index2word[k] for k in sims[:n_words]]
         return text
 
-    def search_topic_by_term(self, term, variant='sim', method=1, n_words=50):
+    def search_topic_by_term(self, term, variant='sim', method=1, n_words=100):
         '''
         This function returns topic number and a wordcloud which represent defined search terms.
         :param term: a list with search terms, e.g. ['market','money']
@@ -252,23 +255,16 @@ class PVTM(Documents):
                 best_matching_topic = pd.DataFrame(list(matches.stack().index)).sort_values(1).iloc[0][0]
                 text = self.wordcloud_df.loc[best_matching_topic]
             print("best_matching_topic", best_matching_topic)
-            wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-            fig, ax = plt.subplots()
-            ax.imshow(wordcloud, interpolation="bilinear", )
-            ax.axis("off")
-            plt.show()
+            self.wordcloud_by_topic(best_matching_topic)
+
         elif len(term) > 1:
             if method == 1:
                 string = ' '.join(term)
                 vector = np.array(self.get_string_vector([string]))
                 best_matching_topic = self.gmm.predict(vector)[0]
-                text = self.wordcloud_df.loc[best_matching_topic]
                 print("best_matching_topic", best_matching_topic)
-                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-                fig, ax = plt.subplots()
-                ax.imshow(wordcloud, interpolation="bilinear", )
-                ax.axis("off")
-                plt.show()
+                self.wordcloud_by_topic(best_matching_topic)
+
             elif method == 2:
                 string = ' '.join(term)
                 vector = np.array(self.get_string_vector([string]))
@@ -280,14 +276,10 @@ class PVTM(Documents):
                 df = pd.DataFrame(top_topics).sort_values(by=1, ascending=False)
                 df.columns = ['topic', 'frequency']
                 best_matching_topic = df.iloc[0, 0]
-                text = self.wordcloud_df.loc[best_matching_topic]
                 print("best_matching_topic", best_matching_topic)
-                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-                fig, ax = plt.subplots()
-                ax.imshow(wordcloud, interpolation="bilinear", )
-                ax.axis("off")
-                plt.show()
-            elif method == 3:
+                self.wordcloud_by_topic(best_matching_topic)
+
+        elif method == 3:
                 vectors = [self.get_string_vector([term[i]]) for i in range(len(term))]
                 terms_df = pd.DataFrame({'topic': range(self.gmm.n_components)})
                 for i in range(len(term)):
@@ -299,13 +291,6 @@ class PVTM(Documents):
                 topics = [np.argsort(terms_df[term[i]].values)[::-1][0] for i in range(len(term))]
                 s = pd.Series(topics)
                 best_matching_topic = s.value_counts().index[0]
-                text = self.wordcloud_df.loc[best_matching_topic]
                 print("best_matching_topic", best_matching_topic)
-                wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
-                fig, ax = plt.subplots()
-                ax.imshow(wordcloud, interpolation="bilinear", )
-                ax.axis("off")
-                plt.show()
-
-
+                self.wordcloud_by_topic(best_matching_topic)
 

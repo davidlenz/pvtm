@@ -65,8 +65,10 @@ for i in range(15):
 
 
 <h3 align="center">Parameters</h3>
+
+
 | param        | value | description                                                                                        |
-|--------------|:-----:|---------------------------------------------------------------------------------------------------:|
+|--------------|-------|----------------------------------------------------------------------------------------------------|
 | hs           | 0     | negative sampling will be used for model training (Doc2Vec)                                        |
 | dbow_words   | 1     | simultaneous training of word vectors and document vectors (Doc2Vec)                               |
 | dm           | 0     | Distributed bag of words (word2vec-Skip-Gram) (dm=0) OR distributed memory (dm=1)                  |

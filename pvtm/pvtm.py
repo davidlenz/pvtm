@@ -190,22 +190,37 @@ class PVTM(Documents):
         '''
         return self.gmm.predict_proba(vector)
 
-    def wordcloud_by_topic(self, topic, n_words=100):
+    def wordcloud_by_topic(self, topic, variant='sim', stop_words=None, n_words=100):
         '''
         :param topic: number of a topic
         :param n_words: number of words to be shown in a wordcloud
         :return: a wordcloud with most common words
         '''
-        text = pd.DataFrame(self.model.wv.similar_by_vector(self.cluster_center[topic],
-                                                            topn=100),
-                            columns=['word', "similarity"]).word.values
-        text = ', '.join(text)
-        wordcloud = WordCloud(max_font_size=50, max_words=n_words, background_color="white").generate(text)
+        if variant == 'sim':
+            text = self.top_topic_center_words.iloc[topic,:n_words]
+            text = " ".join(text)
+            wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
+                                  background_color="white").generate(text)
+        if variant=='count':
+            text = self.topic_words.iloc[topic,:n_words]
+            text = " ".join(text)
+            wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
+                                  background_color="white").generate(text)
         fig, ax = plt.subplots(figsize=(7, 4))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
-        # plt.show()
         return wordcloud
+        # text = pd.DataFrame(self.model.wv.similar_by_vector(self.cluster_center[topic],
+        #                                                    topn=100),
+        #                    columns=['word', "similarity"]).word.values
+        # text = ', '.join(text)
+        # wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stopwords,
+        #                      background_color="white").generate(text)
+        # fig, ax = plt.subplots(figsize=(7, 4))
+        # ax.imshow(wordcloud, interpolation="bilinear", )
+        # ax.axis("off")
+        # plt.show()
+
 
     def get_document_topics(self):
         '''

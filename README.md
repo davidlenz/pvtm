@@ -65,7 +65,7 @@ for i in range(15):
 <h3 align="center">Parameters</h3>
 
 
-| param        | value | description                                                                                        |
+| param        | default | description                                                                                        |
 |--------------|-------|----------------------------------------------------------------------------------------------------|
 | vector_size            | 300     | dimensionality of the feature vectors (Doc2Vec)                                        |
 | n_components            | 15     | number of Gaussian mixture components, i.e. Topics (GMM)                                        |

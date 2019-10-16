@@ -278,7 +278,7 @@ class PVTM(Documents):
                 print("best_matching_topic", best_matching_topic)
                 self.wordcloud_by_topic(best_matching_topic)
 
-        elif method == 3:
+            elif method == 3:
                 vectors = [self.get_string_vector([term[i]]) for i in range(len(term))]
                 terms_df = pd.DataFrame({'topic': range(self.gmm.n_components)})
                 for i in range(len(term)):

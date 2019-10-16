@@ -10,6 +10,7 @@ import time
 from sklearn import mixture
 import gensim
 import re
+import joblib
 
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
@@ -20,7 +21,7 @@ import inspect
 
 import spacy
 
-clean = lambda x: re.sub("[^a-zäöüß& ']", '', str(x).lower()).strip()
+clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '',re.sub('[äöüß]','',str(x).lower())).strip())
 
 
 class Documents(object):
@@ -133,10 +134,12 @@ class PVTM(Documents):
         print('len(texts)', len(texts))
         return texts
 
-    def fit(self, **kwargs):
+    def fit(self, save=True, filename = 'pvtm_model', **kwargs):
         '''
         First, a Doc2Vec model ist trained and clustering of the documents is done by means of
         :param kwargs:
+        :param save: if you want to save the trained model set save=True.
+        :param filename: name of the saved model
         :return: Doc2Vec model and GMM clusters
         '''
         # generate doc2vec model
@@ -165,6 +168,8 @@ class PVTM(Documents):
         self.get_document_topics()
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
+        if save == True:
+            joblib.dump(self, filename)
 
     def get_string_vector(self, string, steps=10):
         '''

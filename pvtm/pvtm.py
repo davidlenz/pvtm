@@ -144,13 +144,12 @@ class PVTM(Documents):
         self.model = gensim.models.Doc2Vec(self.x_docs, **{key: value for key, value in kwargs.items()
                                                            if
                                                            key in inspect.getfullargspec(gensim.models.Doc2Vec).args or
-                                                           key in inspect.getfullargspec(
-                                                               gensim.models.base_any2vec.BaseAny2VecModel).args} or
-                                                          key in inspect.getfullargspec(
-            gensim.models.base_any2vec.BaseWordEmbeddingsModel).args)
+                                                           key in inspect.getfullargspec(gensim.models.base_any2vec.BaseAny2VecModel).args or
+                                                          key in inspect.getfullargspec(gensim.models.base_any2vec.BaseWordEmbeddingsModel).args}
+                                           )
 
         print('Start clustering..')
-        self.gmm = mixture.GaussianMixture(random_state=1, **{key: value for key, value in kwargs.items()
+        self.gmm = mixture.GaussianMixture(**{key: value for key, value in kwargs.items()
                                                               if key in inspect.getfullargspec(
                 mixture.GaussianMixture).args})
         print('Finished clustering.')
@@ -166,7 +165,7 @@ class PVTM(Documents):
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
 
-    def get_string_vector(self, strings, steps=10):
+    def get_string_vector(self, string, steps=10):
         '''
         The function takes a string (document) and
         transforms it to vector using a trained model.
@@ -174,7 +173,7 @@ class PVTM(Documents):
         :param steps: number of times to train the new document.
         :return: document vector
         '''
-        return [self.model.infer_vector(string.split(), steps=steps) for string in strings]
+        return self.model.infer_vector(string.split(), steps=steps)
 
     def get_topic_weights(self, vector):
         '''
@@ -293,4 +292,13 @@ class PVTM(Documents):
                 best_matching_topic = s.value_counts().index[0]
                 print("best_matching_topic", best_matching_topic)
                 self.wordcloud_by_topic(best_matching_topic)
+
+    def infer_topics(self, text):
+        """
+        Infer topics from unseen documents.
+        :param text: array or list of strings
+        :return:
+        """
+        vec = self.get_string_vector(text)
+        return self.get_topic_weights(vec)
 

@@ -86,7 +86,7 @@ for i in range(15):
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
 `pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
 
-<h3 align="center">Inference on unseen documents</h3>
+<h2 align="center">Inference</h2>
 
 PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls
 `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
@@ -117,7 +117,7 @@ and view all results in your browser:
 
 
 
-<h3 align="center">Troubleshooting</h3>
+<h2 align="center">Troubleshooting</h2>
 
 If you get the following warning message during model training:
 

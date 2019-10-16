@@ -81,7 +81,7 @@ for i in range(15):
 | min_alpha    | 0.025 | doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses. |
 | random_state | 123   | random seed (GMM)                                                                                  |
 
-```
+
 
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
 `pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
@@ -128,3 +128,4 @@ just run:
 
 ```
 conda install -c conda-forge gensim
+```

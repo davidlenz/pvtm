@@ -204,7 +204,7 @@ class PVTM(Documents):
         fig, ax = plt.subplots(figsize=(7, 4))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
-        plt.show()
+        # plt.show()
         return wordcloud
 
     def get_document_topics(self):

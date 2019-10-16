@@ -36,7 +36,7 @@ With the parameters `min_df` and `max_df` you set the thresholds for very rare/c
 
 ```python
 from pvtm import pvtm
-PVTM = pvtm.PVTM(texts, lemmatized = True, min_df = 0.005, max_df = 0.95)
+PVTM = pvtm.PVTM(texts, lemmatized = True)
 ```
 
 <h2 align="center">Training</h2>
@@ -44,9 +44,7 @@ PVTM = pvtm.PVTM(texts, lemmatized = True, min_df = 0.005, max_df = 0.95)
 The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the parameters needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameter see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
-pvtm.fit(vector_size = 300, # dimensionality of the feature vectors (Doc2Vec)
-         n_components = 15, # number of Gaussian mixture components, i.e. Topics (GMM)
-         )
+pvtm.fit(n_components = 20, vector_size = 30)
 ```
 
 <h2 align="center">Visualize topics</h3>
@@ -69,6 +67,8 @@ for i in range(15):
 
 | param        | value | description                                                                                        |
 |--------------|-------|----------------------------------------------------------------------------------------------------|
+| vector_size            | 300     | dimensionality of the feature vectors (Doc2Vec)                                        |
+| n_components            | 15     | number of Gaussian mixture components, i.e. Topics (GMM)                                        |
 | hs           | 0     | negative sampling will be used for model training (Doc2Vec)                                        |
 | dbow_words   | 1     | simultaneous training of word vectors and document vectors (Doc2Vec)                               |
 | dm           | 0     | Distributed bag of words (word2vec-Skip-Gram) (dm=0) OR distributed memory (dm=1)                  |
@@ -80,6 +80,7 @@ for i in range(15):
 | alpha        | 0.025 | initial learning rate (Doc2Vec)                                                                    |
 | min_alpha    | 0.025 | doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses. |
 | random_state | 123   | random seed (GMM)                                                                                  |
+| language | 123   | random seed (GMM)                                                                                  |
 
 
 

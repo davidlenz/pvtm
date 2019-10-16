@@ -81,16 +81,6 @@ for i in range(15):
 | min_alpha    | 0.025 | doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses. |
 | random_state | 123   | random seed (GMM)                                                                                  |
 
-
-If you get the following warning message while fitting the model:
-
-|:warning: **User Warning**: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."|
-| --- |
-
-just run:
-
-```
-conda install -c conda-forge gensim
 ```
 
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
@@ -124,3 +114,17 @@ python ".../path to the example file/reuters_with_dash.py"
 and view all results in your browser: 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />
+
+
+
+<h3 align="center">Troubleshooting</h3>
+
+If you get the following warning message during model training:
+
+|:warning: **User Warning**: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."|
+| --- |
+
+just run:
+
+```
+conda install -c conda-forge gensim

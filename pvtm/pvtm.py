@@ -21,7 +21,7 @@ import inspect
 
 import spacy
 
-clean = lambda x: re.sub("[^a-zäöüß& ']", '', str(x).lower()).strip()
+clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '',re.sub('[äöüß]','',str(x).lower())).strip())
 
 
 class Documents(object):

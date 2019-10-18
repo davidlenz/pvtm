@@ -321,4 +321,4 @@ class PVTM(Documents):
         :return:
         """
         vec = self.get_string_vector(text)
-        return self.get_topic_weights(vec)
+        return self.get_topic_weights(vec.reshape(1,-1))

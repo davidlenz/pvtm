@@ -179,7 +179,7 @@ class PVTM(Documents):
         :param steps: number of times to train the new document.
         :return: document vector
         '''
-        return self.model.infer_vector(string.split(), steps=steps)
+        return self.model.infer_vector(string.split(), steps=steps).reshape(1,-1)
 
     def get_topic_weights(self, vector):
         '''

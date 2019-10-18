@@ -86,7 +86,10 @@ pvtm.wordcloud_by_topic(16)
 | alpha        | 0.025 | initial learning rate (Doc2Vec)                                                                    |
 | min_alpha    | 0.025 | doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses. |
 | random_state | 123   | random seed (GMM)                                                                                  |
-| language | 123   | random seed (GMM)                                                                                  |
+| covarinace_type  | 'diag' | covariance type (GMM)                                                    |
+| save | True   | save the trained model                                                                                  |
+| filename | 'pvtm_model' | name of the model to be saved |
+
 
 
 

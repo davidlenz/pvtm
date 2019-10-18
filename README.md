@@ -91,25 +91,25 @@ pvtm.wordcloud_by_topic(16)
 | filename | 'pvtm_model' | name of the model to be saved |
 
 
-
-
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
 `pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
 
 <h2 align="center">Inference</h2>
 
-PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls
-`.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
+PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
 
 ```python
-topics = pvtm.infer_topics(new_texts)
-pd.Series(topics).plot(kind="bar")
+topics = pvtm.infer_topics(new_text)
 ```
 
 which returns:
 
 ```text
-array([[0., 0., 0., 1., 0.]])
+array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
+       1.42747313e-06, 1.67904347e-06, 4.88286876e-03, 2.65966754e-04,
+       2.36464245e-05, 1.11277397e-02, 1.75574895e-05, 1.65568283e-04,
+       1.86956832e-08, 5.60976912e-07, 2.58802897e-02, 2.47131308e-05,
+       7.21725620e-08, 1.10484111e-02, 9.46138567e-01, 3.36056592e-05])
 ```
 
 <h2 align="center">PVTM Web Viewer</h2>

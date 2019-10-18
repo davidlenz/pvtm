@@ -280,14 +280,14 @@ class PVTM(Documents):
         elif len(term) > 1:
             if method == 1:
                 string = ' '.join(term)
-                vector = np.array(self.get_string_vector([string]))
+                vector = np.array(self.get_string_vector(string))
                 best_matching_topic = self.gmm.predict(vector)[0]
                 print("best_matching_topic", best_matching_topic)
                 self.wordcloud_by_topic(best_matching_topic)
 
             elif method == 2:
                 string = ' '.join(term)
-                vector = np.array(self.get_string_vector([string]))
+                vector = np.array(self.get_string_vector(string))
                 docs_num = [self.model.docvecs.most_similar(positive=[np.array(vector).reshape(-1, )], topn=10)[i][0]
                             for i in range(10)]
                 document_topics = np.array(self.gmm.predict(np.array(self.model.docvecs.vectors_docs)))
@@ -300,7 +300,7 @@ class PVTM(Documents):
                 self.wordcloud_by_topic(best_matching_topic)
 
             elif method == 3:
-                vectors = [self.get_string_vector([term[i]]) for i in range(len(term))]
+                vectors = [self.get_string_vector(t) for t in term]
                 terms_df = pd.DataFrame({'topic': range(self.gmm.n_components)})
                 for i in range(len(term)):
                     sims = [cosine_similarity([self.cluster_center[j]], vectors[i]) for j in

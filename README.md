@@ -27,16 +27,21 @@ The example below considers [reuters dataset](https://keras.io/datasets/#reuters
 ```python
 import pandas as pd
 df = pd.read_csv("data/sample_5000.csv")
-texts = df.text
+texts = df.text.values
 ```
 After that, `PVTM` object should be created with the defined input texts.
-Parameter `lemmatized` should be set to `False` when documents' texts should be lemmatized. However, take into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. 
+Parameter `lemmatized` should be set to `False` when documents' texts should be lemmatized. However, take into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. If you want to lemmatize your texts, you should first download [language models](https://spacy.io/usage/models/) and set the parameter lang, e.g. `lang='en'`. 
 Set the parameter `preprocess=True` when the documents texts should be preprocessed, e.g. removal of special characters, number, currency symbols etc.
 With the parameters `min_df` and `max_df` you set the thresholds for very rare/common words which should not be included in the corpus specific vocabulary. Further, you can also exclude language specific stopwords by importing your own stopwords list or using nlkt library as shown below.  
 
 ```python
-from pvtm import pvtm
-PVTM = pvtm.PVTM(texts, lemmatized = True)
+from pvtm.pvtm import PVTM
+from pvtm.pvtm import clean
+import nltk
+from nltk.corpus import stopwords 
+stop_words = set(stopwords.words('english') + ['reuter', '\x03'])
+stop_words = list(stop_words)
+pvtm = pvtm.PVTM(texts, lemmatized = True, stopwords=stop_words)
 ```
 
 <h2 align="center">Training</h2>
@@ -44,16 +49,17 @@ PVTM = pvtm.PVTM(texts, lemmatized = True)
 The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the parameters needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameter see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
-pvtm.fit(n_components = 20, vector_size = 30)
+pvtm.fit(n_components = 15, vector_size = 30)
 ```
 
 <h2 align="center">Visualize topics</h3>
 
-The words closest to a topics vector are considered as topic words.
+The words closest to a topic center vector are considered as topic words. You can visualize topic words with a wordcloud:
 
 ```python
-for i in range(15):
-    PVTM.create_wordcloud_by_topic(i)
+pvtm.wordcloud_by_topic(0)
+pvtm.wordcloud_by_topic(5)
+pvtm.wordcloud_by_topic(16)
 ```
 
 

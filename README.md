@@ -46,7 +46,7 @@ pvtm = pvtm.PVTM(texts, lemmatized = True, stopwords=stop_words)
 
 <h2 align="center">Training</h2>
 
-The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the parameters needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameter see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
+The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the [parameters](pvtm#parameters) needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameters see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
 pvtm.fit(n_components = 15, vector_size = 30)

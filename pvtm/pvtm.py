@@ -278,6 +278,7 @@ class PVTM(Documents):
             self.wordcloud_by_topic(best_matching_topic)
 
         elif len(term) > 1:
+
             if method == 1:
                 string = ' '.join(term)
                 vector = np.array(self.get_string_vector(string))
@@ -322,3 +323,22 @@ class PVTM(Documents):
         """
         vec = self.get_string_vector(text)
         return self.get_topic_weights(vec.reshape(1,-1))
+
+    def start_webapp(self, model_path=None, title="pvtm_webapp"):
+        import os
+
+        if not model_path:
+            tmp_save_path = 'pvtm_model_tmp'
+        self.save(tmp_save_path)
+        time.sleep(1)
+        os.system(f'start cmd.exe /c "TITLE {title}&& python webapp.py -m {tmp_save_path}"')
+
+
+    def stop_webapp(self, title):
+        import os
+        print(title)
+        os.system(f'taskkill /fi "WindowTitle eq {title}"')
+        print("done")
+
+    def save(self, savepath):
+        joblib.dump(self, savepath)

@@ -22,12 +22,11 @@ pip install pvtm
 <h3 align="center">Importing & Preprocessing documents</h3>
 
 Once you have installed the **pvtm** module, you can conduct analysis on your text documents stored in a *.txt* or *.csv* file.
-The example below considers [reuters dataset](https://keras.io/datasets/#reuters-newswire-topics-classification) from `keras.datasets`.
+The example below considers texts from online news, you can load the data as follows
 
 ```python
-import pandas as pd
-df = pd.read_csv("data/sample_5000.csv")
-texts = df.text.values
+from pvtm.pvtm import PVTM
+texts = PVTM.load_example_data()
 ```
 After that, `PVTM` object should be created with the defined input texts.
 Parameter `lemmatized` should be set to `False` when documents' texts should be lemmatized. However, take into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. If you want to lemmatize your texts, you should first download [language models](https://spacy.io/usage/models/) and set the parameter lang, e.g. `lang='en'`. 
@@ -35,7 +34,6 @@ Set the parameter `preprocess=True` when the documents texts should be preproces
 With the parameters `min_df` and `max_df` you set the thresholds for very rare/common words which should not be included in the corpus specific vocabulary. Further, you can also exclude language specific stopwords by importing your own stopwords list or using nlkt library as shown below.  
 
 ```python
-from pvtm.pvtm import PVTM
 from pvtm.pvtm import clean
 import nltk
 from nltk.corpus import stopwords 
@@ -49,7 +47,7 @@ pvtm = pvtm.PVTM(texts, lemmatized = True, stopwords=stop_words)
 The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameters see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
-pvtm.fit(n_components = 15, vector_size = 30)
+pvtm.fit(n_components = 20, vector_size = 30)
 ```
 
 <h2 align="center">Visualize topics</h3>
@@ -114,14 +112,16 @@ array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
 
 <h2 align="center">PVTM Web Viewer</h2>
 
-You can also run the [example](example/reuters_with_dash.py) described above with a dash app extension 
-Interactively explore detected topics in the browser. PVTM includes a web app build on dash to visualize results.
+For visualization of your results, you can run a [dash app](https://dash.plot.ly/) which allows you to explore detected topics in the browser interactively. PVTM includes a web app build on dash to visualize results. 
 
+```python
+pvtm.start_webapp()
 ```
-python ".../path to the example file/reuters_with_dash.py"
-```
+You can see the link in the new CMD window: 
 
-and view all results in your browser: 
+<img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />
+
+So you can view all results in your browser: 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />
 

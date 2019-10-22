@@ -119,11 +119,11 @@ pvtm.start_webapp()
 ```
 You can see the link in the new CMD window: 
 
-<img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />
+<img src="img/running the dash app .png" width="600" height="400" />
 
 So you can view all results in your browser: 
 
-<img src="https://github.com/davidlenz/pvtm/blob/master/img/reuters_dash_demo.gif" width="600" height="400" />
+<img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" width="600" height="400" />
 
 
 

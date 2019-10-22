@@ -133,7 +133,7 @@ class PVTM(Documents):
         print('len(texts)', len(texts))
         return texts
 
-    def fit(self, save=True, filename = 'pvtm_model', **kwargs):
+    def fit(self, **kwargs):
         '''
         First, a Doc2Vec model is trained and clustering of the documents is done by means of GMM.
         :param kwargs: additional arguments which should be passed to Doc2Vec and GMM.
@@ -165,8 +165,6 @@ class PVTM(Documents):
         self.get_document_topics()
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
-        if save == True:
-            joblib.dump(self, filename)
 
     def get_string_vector(self, string, steps=10):
         '''
@@ -345,3 +343,11 @@ class PVTM(Documents):
         :param savepath: path the defined model should be stored in.
         '''
         joblib.dump(self, savepath)
+    def load_example_data(self):
+        '''
+        Loads example text data.
+        :return: an array with texts.
+        '''
+        df = pd.read_csv("data/sample_5000.csv")
+        texts = df.text.values
+        return texts

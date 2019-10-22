@@ -343,7 +343,7 @@ class PVTM(Documents):
         :param savepath: path the defined model should be stored in.
         '''
         joblib.dump(self, savepath)
-    def load_example_data(self):
+    def load_example_data():
         '''
         Loads example text data.
         :return: an array with texts.

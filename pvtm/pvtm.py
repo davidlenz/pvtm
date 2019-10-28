@@ -23,6 +23,15 @@ import spacy
 
 clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '',re.sub('[äöüß]','',str(x).lower())).strip())
 
+def load_example_data():
+    '''
+    Loads example text data.
+    :return: an array with texts.
+    '''
+    df = pd.read_csv("data/sample_5000.csv")
+    texts = df.text.values
+    return texts
+
 
 class Documents(object):
     '''
@@ -343,11 +352,5 @@ class PVTM(Documents):
         :param savepath: path the defined model should be stored in.
         '''
         joblib.dump(self, savepath)
-    def load_example_data():
-        '''
-        Loads example text data.
-        :return: an array with texts.
-        '''
-        df = pd.read_csv("data/sample_5000.csv")
-        texts = df.text.values
-        return texts
+
+

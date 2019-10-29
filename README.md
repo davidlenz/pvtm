@@ -1,7 +1,7 @@
 <h1 align="center">PVTM</h1>
 <p align="center">Paragraph Vector Topic Model</p>
 
-**PVTM** represents documents in a semantic space using [Doc2Vec](https://arxiv.org/abs/1405.4053/), which are then clustered using [Gaussian mixture models](https://link.springer.com/referenceworkentry/10.1007%2F978-1-4899-7488-4_196) (GMM). Doc2Vec has been shown to capture latent variables of documents, e.g., the underlying topics of a document. Clusters of documents in the vector space can be interpreted and transformed into meaningful topics by means of Gaussian mixture modeling.
+**PVTM** represents documents in a semantic space via [Doc2Vec](https://arxiv.org/abs/1405.4053/) to cluster them into meaningful topics using [Gaussian mixture models](https://link.springer.com/referenceworkentry/10.1007%2F978-1-4899-7488-4_196) (GMM). Doc2Vec has been shown to capture latent variables of documents, e.g., the underlying topics of a document. Clusters of documents in the vector space can be interpreted and transformed into meaningful topics by means of Gaussian mixture modeling.
 
 <h2 align="center">Highlights</h2>
 
@@ -12,7 +12,7 @@
 
 <h2 align="center">Install</h2>
 
-Install the module via `pip` command.
+Via `pip` 
 
 ```
 pip install pvtm 
@@ -21,8 +21,8 @@ pip install pvtm
 <h2 align="center">Getting Started</h2>
 <h3 align="center">Importing & Preprocessing documents</h3>
 
-Once you have installed the **pvtm** module, you can conduct analysis on your text documents stored in a *.txt* or *.csv* file.
-The example below considers texts from online news, you can load the data as follows
+Once you have installed **PVTM**, you can conduct analysis on your text documents.
+The example below considers texts from different online news, you can load the data as follows
 
 ```python
 from pvtm.pvtm import PVTM
@@ -44,7 +44,7 @@ pvtm = pvtm.PVTM(texts, lemmatized = True, stopwords=stop_words)
 
 <h2 align="center">Training</h2>
 
-The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of GGM. For this, you only need to call the `pvtm.fit()` method and pass all the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameters see information provided by [gesim](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
+The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of Gaussian mixture modeling. Call the `pvtm.fit()` method and pass the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameters see information provided [on the gensim Doc2Vec documentation](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn for the Gaussian mixture model](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
 pvtm.fit(n_components = 20, vector_size = 30)

@@ -56,14 +56,13 @@ The words closest to a topic center vector are considered as topic words. You ca
 
 ```python
 pvtm.wordcloud_by_topic(0)
-pvtm.wordcloud_by_topic(5)
-pvtm.wordcloud_by_topic(16)
+pvtm.wordcloud_by_topic(1)
+pvtm.wordcloud_by_topic(3)
+pvtm.wordcloud_by_topic(6)
 ```
 
-<img src="img/img1.png">
-<img src="img/img2.png">
-<img src="img/img3.png">
-<img src="img/img4.png">
+<img src="img/img1.png" width="425"/> <img src="img/img2.png" width="425"/> 
+<img src="img/img3.png" width="425"/> <img src="img/img4.png" width="425"/> 
 
 
 <h3 align="center">Parameters</h3>

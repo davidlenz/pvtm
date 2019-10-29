@@ -13,13 +13,16 @@ import re
 import joblib
 
 import matplotlib.pyplot as plt
+import requests
 from wordcloud import WordCloud
+from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
 import inspect
 
 import spacy
+
 
 clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '',re.sub('[äöüß]','',str(x).lower())).strip())
 
@@ -192,16 +195,18 @@ class PVTM(Documents):
         :param n_words: number of words to be shown in a wordcloud.
         :return: a wordcloud with most common words.
         '''
+        shape = np.array(Image.open(
+            requests.get('https://pbs.twimg.com/profile_images/686400525449875458/DCYagUbE.png', stream=True).raw))
         if variant == 'sim':
             text = self.top_topic_center_words.iloc[topic,:n_words]
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
-                                  background_color="white").generate(text)
+                                  background_color="white", mask=shape).generate(text)
         if variant=='count':
             text = self.topic_words.iloc[topic,:n_words]
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
-                                  background_color="white").generate(text)
+                                  background_color="white", mask=shape).generate(text)
         fig, ax = plt.subplots(figsize=(7, 4))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")

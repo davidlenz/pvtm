@@ -122,7 +122,7 @@ You can see the link in the new CMD window:
 
 So you can view all results in your browser: 
 
-<img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" width="600" height="400" />
+<img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" />
 
 
 

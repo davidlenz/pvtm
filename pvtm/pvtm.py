@@ -179,24 +179,31 @@ class PVTM(Documents):
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
 
-    def get_string_vector(self, string, steps=10):
+    def get_string_vector(self, string, steps=100):
         '''
         The function takes a string (document) and
         transforms it to vector using a trained model.
-        :param strings: new document string.
+        :param string: new document string.
         :param steps: number of times to train the new document.
         :return: document vector.
         '''
+        assert isinstance(string, str), "string parameter should be a string with the original text"
+        string = clean(string)
         return self.model.infer_vector(string.split(), steps=steps).reshape(1,-1)
 
-    def get_topic_weights(self, vector):
+    def get_topic_weights(self, vector, probabilities = True):
         '''
         The function takes a document vector
         and returns a distribution of a given document over all topics.
         :param vector: document vector.
+        :param probabilities: if True, probability distribution over all topics is returned. If False,
+        number of topic with the highest probability is returned.
         :return: probability distribution of the vector over all topics.
         '''
-        return self.gmm.predict_proba(vector)
+        if probabilities:
+            return self.gmm.predict_proba(vector)
+        else:
+            return self.gmm.predict(vector)
 
     def wordcloud_by_topic(self, topic, variant='sim', stop_words=None, n_words=100):
         '''
@@ -250,7 +257,7 @@ class PVTM(Documents):
         text = [self.model.wv.index2word[k] for k in sims[:n_words]]
         return text
 
-    def search_topic_by_term(self, term, variant='sim', method= 'combine', n_words=100):
+    def search_topic_by_term(self, term, variant='sim', method= 'vec_sim', n_words=100):
         '''
         This function returns topic number and a wordcloud which represent defined search terms.
         :param term: a list with search terms, e.g. ['market','money']
@@ -268,6 +275,7 @@ class PVTM(Documents):
         '''
         assert isinstance(term, (list, tuple)), 'term parameter should be a list or a tuple'
         if len(term) == 1:
+            assert variant == 'sim' or variant == 'count', "choose one of the available variants: sim or count"
             if variant == "sim":
                 matches = self.top_topic_center_words[self.top_topic_center_words == term[0]]
                 best_matching_topic = pd.DataFrame(list(matches.stack().index)).sort_values(1).iloc[0][0]
@@ -281,7 +289,8 @@ class PVTM(Documents):
             self.wordcloud_by_topic(best_matching_topic)
 
         elif len(term) > 1:
-
+            assert method == 'combine' or method== 'sim_docs' or method == 'vec_sim', "choose one of the available methods: " \
+                                                                        "combine, sim_docs or vec_sim"
             if method == 'combine':
                 string = ' '.join(term)
                 vector = np.array(self.get_string_vector(string))
@@ -318,14 +327,16 @@ class PVTM(Documents):
                 print("best_matching_topic", best_matching_topic)
                 self.wordcloud_by_topic(best_matching_topic)
 
-    def infer_topics(self, text):
+    def infer_topics(self, text, probabilities = True):
         """
         Infer topics from unseen documents.
         :param text: array or list of strings.
+        :param probabilities: if True, probability distribution over all topics is returned. If False,
+        number of topic with the highest probability is returned.
         :return: probability distribution of the text vector over all topics.
         """
         vec = self.get_string_vector(text)
-        return self.get_topic_weights(vec)
+        return self.get_topic_weights(vec, probabilities = probabilities)
 
     def start_webapp(self, model_path = None, title = "pvtm_webapp"):
         '''

@@ -66,7 +66,9 @@ class PVTM(Documents):
         :return: cleaned texts.
         '''
         texts = self.documents
+
         texts = [clean(x) for x in texts]
+
         if lemmatize:
             texts = self.lemmatize(texts)
 
@@ -74,8 +76,10 @@ class PVTM(Documents):
                                                                       **{key: value for key, value in kwargs.items()
                                                                          if key in inspect.getfullargspec(
                                                                               self.popularity_based_prefiltering).args})
+        self.documents = cleaned_text
+        x = [kk.split() for kk in cleaned_text]
+        self.x_docs = Documents(x)
         return cleaned_text
-
     def get_allowed_vocab(self, data, min_df=0.05, max_df=0.95):
         '''
         Vocabulary building using sklearn's tfidfVectorizer.

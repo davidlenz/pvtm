@@ -51,26 +51,23 @@ class Documents(object):
 
 class PVTM(Documents):
 
-    def __init__(self, texts, preprocess=True, **kwargs):
-        if preprocess == True:
-            texts = self.preprocess(texts, **kwargs)
+    def __init__(self, texts):
         x = [kk.split() for kk in texts]
         self.documents = texts
         self.x_docs = Documents(x)
 
-    def preprocess(self, texts, lemmatized, **kwargs):
+    def preprocess(self, lemmatize = False, **kwargs):
         '''
         The function takes a list of texts and removes stopwords, special characters, punctuation as well
         as very frequent and very unfrequent words.
         :param texts: original documents.
-        :param lemmatized: if lemmatized=False, lemmatization of the texts will be done.
+        :param lemmatize: if lemmatize = True, lemmatization of the texts will be done.
         :param kwargs: additional key word arguments passed to popularity_based_prefiltering() function.
         :return: cleaned texts.
         '''
-
+        texts = self.documents
         texts = [clean(x) for x in texts]
-
-        if not lemmatized:
+        if lemmatize:
             texts = self.lemmatize(texts)
 
         cleaned_text, self.vocab = self.popularity_based_prefiltering(texts,

@@ -204,8 +204,9 @@ class PVTM(Documents):
         :param n_words: number of words to be shown in a wordcloud.
         :return: a wordcloud with most common words.
         '''
-        shape = np.array(Image.open(
-            requests.get('https://pbs.twimg.com/profile_images/686400525449875458/DCYagUbE.png', stream=True).raw))
+        x, y = np.ogrid[:300, :300]
+        shape = (x - 150) ** 2 + (y - 150) ** 2 > 130 ** 2
+        shape = 255 * shape.astype(int)
         if variant == 'sim':
             text = self.top_topic_center_words.iloc[topic,:n_words]
             text = " ".join(text)
@@ -216,7 +217,7 @@ class PVTM(Documents):
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
                                   background_color="white", mask=shape).generate(text)
-        fig, ax = plt.subplots(figsize=(7, 4))
+        fig, ax = plt.subplots(figsize=(10, 8))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
         return wordcloud

@@ -15,39 +15,38 @@
 Via `pip` 
 
 ```
-pip install pvtm 
+pip install git+https://github.com/davidlenz/pvtm
 ```
 
 <h2 align="center">Getting Started</h2>
 <h3 align="center">Importing & Preprocessing documents</h3>
 
-Once you have installed **PVTM**, you can conduct analysis on your text documents.
-The example below considers texts from different online news, you can load the data as follows
+Once **PVTM** is installed, analysis on text documents can be conducted.
+The example below considers texts from different online news, the data can be loaded as follows
 
 ```python
 from pvtm.pvtm import PVTM
 texts = PVTM.load_example_data()
 ```
 After that, `PVTM` object should be created with the defined input texts.
-Parameter `lemmatized` should be set to `False` when documents' texts should be lemmatized. However, take into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. If you want to lemmatize your texts, you should first download [language models](https://spacy.io/usage/models/) and set the parameter lang, e.g. `lang='en'`. 
-Set the parameter `preprocess=True` when the documents texts should be preprocessed, e.g. removal of special characters, number, currency symbols etc.
-With the parameters `min_df` and `max_df` you set the thresholds for very rare/common words which should not be included in the corpus specific vocabulary. Further, you can also exclude language specific stopwords by importing your own stopwords list or using nlkt library as shown below.  
+`.preprocess` method offers the posibility for cleaning(e.g. removal of special characters, number, currency symbols etc.) and lemmatization of texts.
+Parameter `lemmatize` should be set to `True` when documents' texts should be lemmatized. However, it should be taken into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. If the texts should be lemmatized first, corresponding language models should be downloaded from [here](https://spacy.io/usage/models/) and the language parameter should be set, e.g. `lang='en'`. 
+With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. Further, language specific stopwords can be excluded by importing your own stopwords list or, for axample, using nlkt library.  
 
 ```python
 from pvtm.pvtm import clean
-import nltk
-from nltk.corpus import stopwords 
-stop_words = set(stopwords.words('english') + ['reuter', '\x03'])
-stop_words = list(stop_words)
-pvtm = pvtm.PVTM(texts, lemmatized = True, stopwords=stop_words)
+pvtm = PVTM(texts)
+pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
 ```
 
 <h2 align="center">Training</h2>
 
-The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of Gaussian mixture modeling. Call the `pvtm.fit()` method and pass the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering. For more detailed description of the parameters see information provided [on the gensim Doc2Vec documentation](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn for the Gaussian mixture model](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
+The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of Gaussian mixture modeling. The `pvtm.fit()` method should be called and the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering should be passed. For more detailed description of the parameters see information provided [on the gensim Doc2Vec documentation](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn for the Gaussian mixture model](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
-pvtm.fit(n_components = 20, vector_size = 30)
+pvtm.fit(vector_size = 50, # dimensionality of the feature vectors (Doc2Vec)
+         n_components = 20, # number of Gaussian mixture components, i.e. Topics (GMM)
+         epochs=30)
 ```
 
 <h2 align="center">Visualize topics</h3>
@@ -56,9 +55,6 @@ The words closest to a topic center vector are considered as topic words. You ca
 
 ```python
 pvtm.wordcloud_by_topic(0)
-pvtm.wordcloud_by_topic(1)
-pvtm.wordcloud_by_topic(3)
-pvtm.wordcloud_by_topic(6)
 ```
 
 <img src="img/img1.png" width="425"/> <img src="img/img2.png" width="425"/> 
@@ -111,16 +107,16 @@ array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
 
 <h2 align="center">PVTM Web Viewer</h2>
 
-For visualization of your results, you can run a [dash app](https://dash.plot.ly/) which allows you to explore detected topics in the browser interactively. PVTM includes a web app build on dash to visualize results. 
+For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to explore detected topics in the browser interactively. PVTM includes a web app build on dash to visualize results. 
 
 ```python
 pvtm.start_webapp()
 ```
-You can see the link in the new CMD window: 
+One can see the link in the new CMD window: 
 
 <img src="img/running the dash app .png" width="600" height="400" />
 
-So you can view all results in your browser: 
+And all results can be viewed in the browser: 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" />
 

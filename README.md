@@ -104,6 +104,20 @@ array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
        1.86956832e-08, 5.60976912e-07, 2.58802897e-02, 2.47131308e-05,
        7.21725620e-08, 1.10484111e-02, 9.46138567e-01, 3.36056592e-05])
 ```
+<h2 align="center">Best matching topics</h2>
+
+`search_topic_by_term` method allows to search for topics which best describe defined term(s). For example,
+
+```python
+pvtm.search_topic_by_term(['deal'])
+pvtm.search_topic_by_term(['chance','market'])
+```
+return:
+```text
+best_matching_topic 2
+best_matching_topic 14
+```
+<img src="img/search_topic_1.png" width="425"/> <img src="img/search_topic_2.png" width="425"/> 
 
 <h2 align="center">PVTM Web Viewer</h2>
 

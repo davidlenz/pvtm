@@ -1,7 +1,6 @@
 from pvtm.pvtm import PVTM
 from pvtm.pvtm import clean
 from keras.datasets import reuters
-from sklearn.model_selection import train_test_split
 import nltk
 import argparse
 import numpy as np
@@ -16,27 +15,28 @@ def reuters_news_wire_texts():
     return texts, y_train
 
 input_texts, y = reuters_news_wire_texts()
-texts_train, texts_test = train_test_split(input_texts, test_size=0.2, random_state=42)
+len_docs = 5000
 # load stop words
 nltk.download("stopwords")
 from nltk.corpus import stopwords
 stop_words = list(set(stopwords.words('english')))
 
 # Create PVTM class object
-pvtm = PVTM(texts_train, lemmatized = True, min_df = 0.005, max_df = 0.65, stopwords = stop_words)
-pvtm.fit(vector_size=100,
+pvtm = PVTM(input_texts[:len_docs])
+pvtm.preprocess(lemmatize = False, lang = 'en', min_df = 0.005)
+pvtm.fit(vector_size = 50,
          hs=0,
          dbow_words=1, # train word vectors!
          dm=0, # Distributed bag of words (=word2vec-Skip-Gram) (dm=0) OR distributed memory (=word2vec-cbow) (dm=1)
-         epochs=1, # doc2vec training epochs
+         epochs= 20, # doc2vec training epochs
          window=1, # doc2vec window size
          seed=123, # doc3vec random seed
-         #random_state = 123, # gmm random seed
+         random_state = 123, # gmm random seed
          min_count=5, # minimal number of appearences for a word to be considered
          workers=1, # doc2vec num workers
          alpha=0.025, # doc2vec initial learning rate
          min_alpha=0.025, # doc2vec final learning rate. Learning rate will linearly drop to min_alpha as training progresses.
-         n_components=7, # number of Gaussian mixture components, i.e. Topics
+         n_components=15, # number of Gaussian mixture components, i.e. Topics
          covariance_type='diag', # gmm covariance type
          verbose=1, # verbosity
          n_init=1, # gmm number of initializations
@@ -49,6 +49,8 @@ document_vectors = np.array(pvtm.model.docvecs.vectors_docs)
 # Thereby, each row is a single document, each column is one topic. The entries within the matrix are probabilities.
 document_topics = np.array(pvtm.gmm.predict_proba(np.array(pvtm.model.docvecs.vectors_docs)))
 
-new_text = texts_test
-new_vector = pvtm.get_string_vector([clean(new_text)])
-print(pvtm.get_topic_weights(new_vector))
+# Inference
+new_text = input_texts[len_docs+1]
+pvtm.infer_topics(new_text)
+
+pvtm.start_webapp()

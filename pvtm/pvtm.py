@@ -24,7 +24,7 @@ import inspect
 import spacy
 
 mapping = {ord(u"ü"): u"ue", ord(u"ß"): u"ss", ord(u"ä"): u"ae", ord(u"ö"): u"oe"}
-clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '',re.sub('[äöüß]','',str(x).lower())).strip()).translate(mapping)
+clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '', str(x).lower()).strip()).translate(mapping)
 
 def load_example_data():
     '''

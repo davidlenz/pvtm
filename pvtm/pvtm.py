@@ -206,7 +206,7 @@ class PVTM(Documents):
         else:
             return self.gmm.predict(vector)
 
-    def wordcloud_by_topic(self, topic, variant='sim', stop_words=None, n_words=100):
+    def wordcloud_by_topic(self, topic, variant='sim', stop_words=None, n_words=100, savepath=None):
         '''
         Create a wordcloud to the defined topic.
         :param topic: number of a topic.
@@ -229,6 +229,8 @@ class PVTM(Documents):
         fig, ax = plt.subplots(figsize=(10, 8))
         ax.imshow(wordcloud, interpolation="bilinear", )
         ax.axis("off")
+        if savepath:
+            plt.savefig(savepath)
         return wordcloud
 
 

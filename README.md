@@ -39,7 +39,7 @@ With the parameters `min_df` and `max_df` the thresholds for very rare/common wo
 
 ```python
 p = pvtm.PVTM(texts)
-_ = p.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
+_ = p.preprocess(lemmatize = False, lang = 'en', min_df = 0.005)
 ```
 
 <h2 align="center">Training</h2>

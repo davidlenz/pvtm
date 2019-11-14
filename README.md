@@ -108,22 +108,23 @@ best_matching_topic 14
 
 <h2 align="center">PVTM Web Viewer</h2>
 
-<h4 align="center">Windows only currently</h4>
+For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to interactively explore topics in the browser. 
+PVTM includes a web app build on dash to visualize results.  
 
-For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to interactively explore topics in the browser. PVTM includes a web app build on dash to visualize results.  
-
+First, save a trained model:
 ```python
-p.start_webapp()
+p.save(path="./pvtm_model")
 ```
-One can see the link in the new CMD window: 
+Then start the webapp from shell:
+```
+python pvtm/start_webapp.py -m ./pvtm_model
+```
 
 <img src="img/running the dash app .png" width="600" height="400" />
 
-And all results can be viewed in the browser: 
+Topics can be viewed in the browser: 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" />
-
-
 
 
 <h2 align="center">Inference (*experimental*)</h2>

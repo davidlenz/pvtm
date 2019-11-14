@@ -11,7 +11,7 @@ from sklearn import mixture
 import gensim
 import re
 import joblib
-
+import os
 import matplotlib.pyplot as plt
 import requests
 from wordcloud import WordCloud
@@ -24,7 +24,8 @@ import inspect
 import spacy
 
 mapping = {ord(u"ü"): u"ue", ord(u"ß"): u"ss", ord(u"ä"): u"ae", ord(u"ö"): u"oe"}
-clean = lambda x: re.sub('\W+',' ', re.sub(" \d+", '', str(x).lower()).strip()).translate(mapping)
+clean = lambda x: re.sub('\W+', ' ', re.sub(" \d+", '', str(x).lower()).strip()).translate(mapping)
+
 
 def load_example_data():
     '''
@@ -40,6 +41,7 @@ class Documents(object):
     '''
     :return: tagged documents.
     '''
+
     def __init__(self, documents):
         self.documents = documents
         self.len = len(documents)
@@ -56,7 +58,7 @@ class PVTM(Documents):
         self.documents = texts
         self.x_docs = Documents(x)
 
-    def preprocess(self, lemmatize = False, lang = 'en', **kwargs):
+    def preprocess(self, lemmatize=False, lang='en', **kwargs):
         '''
         The function takes a list of texts and removes stopwords, special characters, punctuation as well
         as very frequent and very unfrequent words.
@@ -71,7 +73,7 @@ class PVTM(Documents):
         texts = [clean(x) for x in texts]
 
         if lemmatize:
-            texts = self.lemmatize(texts, lang = lang)
+            texts = self.lemmatize(texts, lang=lang)
 
         cleaned_text, self.vocab = self.popularity_based_prefiltering(texts,
                                                                       **{key: value for key, value in kwargs.items()
@@ -81,6 +83,7 @@ class PVTM(Documents):
         x = [kk.split() for kk in cleaned_text]
         self.x_docs = Documents(x)
         return cleaned_text
+
     def get_allowed_vocab(self, data, min_df=0.05, max_df=0.95):
         '''
         Vocabulary building using sklearn's tfidfVectorizer.
@@ -190,9 +193,9 @@ class PVTM(Documents):
         '''
         assert isinstance(string, str), "string parameter should be a string with the original text"
         string = clean(string)
-        return self.model.infer_vector(string.split(), steps=steps).reshape(1,-1)
+        return self.model.infer_vector(string.split(), steps=steps).reshape(1, -1)
 
-    def get_topic_weights(self, vector, probabilities = True):
+    def get_topic_weights(self, vector, probabilities=True):
         '''
         The function takes a document vector
         and returns a distribution of a given document over all topics.
@@ -217,12 +220,12 @@ class PVTM(Documents):
         shape = (x - 150) ** 2 + (y - 150) ** 2 > 130 ** 2
         shape = 255 * shape.astype(int)
         if variant == 'sim':
-            text = self.top_topic_center_words.iloc[topic,:n_words]
+            text = self.top_topic_center_words.iloc[topic, :n_words]
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
                                   background_color="white", mask=shape).generate(text)
-        if variant=='count':
-            text = self.topic_words.iloc[topic,:n_words]
+        if variant == 'count':
+            text = self.topic_words.iloc[topic, :n_words]
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
                                   background_color="white", mask=shape).generate(text)
@@ -232,7 +235,6 @@ class PVTM(Documents):
         if savepath:
             plt.savefig(savepath)
         return wordcloud
-
 
     def get_document_topics(self):
         '''
@@ -260,7 +262,7 @@ class PVTM(Documents):
         text = [self.model.wv.index2word[k] for k in sims[:n_words]]
         return text
 
-    def search_topic_by_term(self, term, variant='sim', method= 'vec_sim', n_words=100):
+    def search_topic_by_term(self, term, variant='sim', method='vec_sim', n_words=100):
         '''
         This function returns topic number and a wordcloud which represent defined search terms.
         :param term: a list with search terms, e.g. ['market','money']
@@ -292,8 +294,8 @@ class PVTM(Documents):
             self.wordcloud_by_topic(best_matching_topic)
 
         elif len(term) > 1:
-            assert method == 'combine' or method== 'sim_docs' or method == 'vec_sim', "choose one of the available methods: " \
-                                                                        "combine, sim_docs or vec_sim"
+            assert method == 'combine' or method == 'sim_docs' or method == 'vec_sim', "choose one of the available methods: " \
+                                                                                       "combine, sim_docs or vec_sim"
             if method == 'combine':
                 string = ' '.join(term)
                 vector = np.array(self.get_string_vector(string))
@@ -330,7 +332,7 @@ class PVTM(Documents):
                 print("best_matching_topic", best_matching_topic)
                 self.wordcloud_by_topic(best_matching_topic)
 
-    def infer_topics(self, text, probabilities = True):
+    def infer_topics(self, text, probabilities=True):
         """
         Infer topics from unseen documents.
         :param text: array or list of strings.
@@ -339,39 +341,19 @@ class PVTM(Documents):
         :return: probability distribution of the text vector over all topics.
         """
         vec = self.get_string_vector(text)
-        return self.get_topic_weights(vec, probabilities = probabilities)
-
-    def start_webapp(self, model_path = None, title = "pvtm_webapp"):
-        '''
-        Run the dash app for visualization of results.
-        :param model_path: path to the saved model.
-        :param title: title displayed above the CMD window.
-        :return: link to the running dash app.
-        '''
-        import os
-        if not model_path:
-            tmp_save_path = 'pvtm_model_tmp'
-        self.save(tmp_save_path)
-        time.sleep(1)
-        os.system(f'start cmd.exe /c "TITLE {title}&& python webapp.py -m {tmp_save_path}"')
+        return self.get_topic_weights(vec, probabilities=probabilities)
 
 
-    def stop_webapp(self, title = "pvtm_webapp"):
+    def save(self, path=None):
         '''
-        Stops running the dash app.
-        :param title: title displayed above the CMD window.
-        :return: stops running the dash app.
-        '''
-        import os
-        print(title)
-        os.system(f'taskkill /fi "WindowTitle eq {title}"')
-        print("done")
-
-    def save(self, savepath):
-        '''
-        Save the trained model.
+        Save the trained model. Name it whatever you like.
         :param savepath: path the defined model should be stored in.
         '''
-        joblib.dump(self, savepath)
 
+        if not path:
+            path = 'pvtm_model_tmp'
 
+        path = os.path.abspath(path)
+        print("Save model to:", path)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        joblib.dump(self, path)

@@ -28,8 +28,8 @@ Once **PVTM** is installed, analysis on text documents can be conducted.
 The example below considers texts from different online news, the data can be loaded as follows
 
 ```python
-from pvtm.pvtm import PVTM
-texts = PVTM.load_example_data()
+from pvtm import pvtm
+texts = pvtm.load_example_data()
 ```
 `PVTM` object takes a list of strings as input.
 `.preprocess` method offers the possibility to clean (e.g. removal of special characters, number, currency symbols etc.) and lemmatize these strings.
@@ -38,8 +38,7 @@ If the texts should be lemmatized first, corresponding language models should be
 With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. Further, language specific stopwords can be excluded by importing your own stopwords list or, for axample, using nlkt library.  
 
 ```python
-from pvtm.pvtm import clean, load_example_data
-pvtm = PVTM(texts)
+p = PVTM(texts)
 _ = pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
 ```
 
@@ -48,7 +47,7 @@ _ = pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
 The next step includes training the Doc2Vec model and clustering of the resulted document vectors by means of Gaussian mixture modeling. The `pvtm.fit()` method should be called and the [parameters](https://github.com/davidlenz/pvtm#parameters) needed for the Doc2Vec model training and GMM clustering should be passed. For more detailed description of the parameters see information provided [on the gensim Doc2Vec documentation](https://radimrehurek.com/gensim/models/doc2vec.html)(Doc2Vec model) and [sklearn for the Gaussian mixture model](https://scikit-learn.org/stable/modules/generated/sklearn.mixture.GaussianMixture.html)(GMM).
 
 ```python
-pvtm.fit(vector_size = 50, # dimensionality of the feature vectors (Doc2Vec)
+p.fit(vector_size = 50, # dimensionality of the feature vectors (Doc2Vec)
          n_components = 20, # number of Gaussian mixture components, i.e. Topics (GMM)
          epochs=30)
 ```
@@ -58,7 +57,7 @@ pvtm.fit(vector_size = 50, # dimensionality of the feature vectors (Doc2Vec)
 The words closest to a topic center vector are considered as topic words. You can visualize topic words with a wordcloud:
 
 ```python
-pvtm.wordcloud_by_topic(0)
+p.wordcloud_by_topic(0)
 ```
 
 <img src="img/img1.png" width="425"/> <img src="img/img2.png" width="425"/> 
@@ -88,8 +87,8 @@ pvtm.wordcloud_by_topic(0)
 | filename | 'pvtm_model' | name of the model to be saved |
 
 
-`pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
-`pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
+`p.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
+`p.wordcloud_df`contains all texts which were assingned to single topics. 
 
 
 <h2 align="center">Best matching topics</h2>
@@ -97,8 +96,8 @@ pvtm.wordcloud_by_topic(0)
 `search_topic_by_term` method allows to search for topics which best describe defined term(s). For example,
 
 ```python
-pvtm.search_topic_by_term(['deal'])
-pvtm.search_topic_by_term(['chance','market'])
+p.search_topic_by_term(['deal'])
+p.search_topic_by_term(['chance','market'])
 ```
 return:
 ```text
@@ -112,7 +111,7 @@ best_matching_topic 14
 For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to explore detected topics in the browser interactively. PVTM includes a web app build on dash to visualize results. 
 
 ```python
-pvtm.start_webapp()
+p.start_webapp()
 ```
 One can see the link in the new CMD window: 
 
@@ -130,7 +129,7 @@ And all results can be viewed in the browser:
 PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
 
 ```python
-topics = pvtm.infer_topics(new_text)
+topics = p.infer_topics(new_text)
 ```
 
 which returns:

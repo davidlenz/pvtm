@@ -108,7 +108,9 @@ best_matching_topic 14
 
 <h2 align="center">PVTM Web Viewer</h2>
 
-For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to explore detected topics in the browser interactively. PVTM includes a web app build on dash to visualize results. 
+<h4 align="center">Windows only currently</h4>
+
+For visualization of your results, one can run a [dash app](https://dash.plot.ly/) which allows to interactively explore topics in the browser. PVTM includes a web app build on dash to visualize results.  
 
 ```python
 p.start_webapp()

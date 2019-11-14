@@ -15,7 +15,10 @@
 Via `pip` 
 
 ```
-pip install git+https://github.com/davidlenz/pvtm
+[comment]: <> (pip install git+https://github.com/davidlenz/pvtm)
+git clone https://github.com/davidlenz/pvtm
+cd pvtm
+pip install -r requirements.txt
 ```
 
 <h2 align="center">Getting Started</h2>
@@ -28,15 +31,16 @@ The example below considers texts from different online news, the data can be lo
 from pvtm.pvtm import PVTM
 texts = PVTM.load_example_data()
 ```
-After that, `PVTM` object should be created with the defined input texts.
-`.preprocess` method offers the posibility for cleaning(e.g. removal of special characters, number, currency symbols etc.) and lemmatization of texts.
-Parameter `lemmatize` should be set to `True` when documents' texts should be lemmatized. However, it should be taken into account that this step could lead to improved results but also takes some time depending on the size of the document corpus. If the texts should be lemmatized first, corresponding language models should be downloaded from [here](https://spacy.io/usage/models/) and the language parameter should be set, e.g. `lang='en'`. 
+`PVTM` object takes a list of strings as input.
+`.preprocess` method offers the possibility to clean (e.g. removal of special characters, number, currency symbols etc.) and lemmatize these strings.
+Parameter `lemmatize` should be set to `True` when documents' texts should be lemmatized. This can lead to improved results but also may take some time depending on the size of the corpus. 
+If the texts should be lemmatized first, corresponding language models should be downloaded from [here](https://spacy.io/usage/models/) and the language parameter should be set, e.g. `lang='en'`. 
 With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. Further, language specific stopwords can be excluded by importing your own stopwords list or, for axample, using nlkt library.  
 
 ```python
-from pvtm.pvtm import clean
+from pvtm.pvtm import clean, load_example_data
 pvtm = PVTM(texts)
-pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
+_ = pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
 ```
 
 <h2 align="center">Training</h2>
@@ -61,7 +65,7 @@ pvtm.wordcloud_by_topic(0)
 <img src="img/img3.png" width="425"/> <img src="img/img4.png" width="425"/> 
 
 
-<h3 align="center">Parameters</h3>
+<h2 align="center">Parameters</h2>
 
 
 | param        | default | description                                                                                        |
@@ -87,23 +91,7 @@ pvtm.wordcloud_by_topic(0)
 `pvtm.topic_words`contains 100 frequent words from the texts which were assingned to single topics. 
 `pvtm.wordcloud_df`contains all texts which were assingned to single topics. 
 
-<h2 align="center">Inference</h2>
 
-PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
-
-```python
-topics = pvtm.infer_topics(new_text)
-```
-
-which returns:
-
-```text
-array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
-       1.42747313e-06, 1.67904347e-06, 4.88286876e-03, 2.65966754e-04,
-       2.36464245e-05, 1.11277397e-02, 1.75574895e-05, 1.65568283e-04,
-       1.86956832e-08, 5.60976912e-07, 2.58802897e-02, 2.47131308e-05,
-       7.21725620e-08, 1.10484111e-02, 9.46138567e-01, 3.36056592e-05])
-```
 <h2 align="center">Best matching topics</h2>
 
 `search_topic_by_term` method allows to search for topics which best describe defined term(s). For example,
@@ -133,6 +121,27 @@ One can see the link in the new CMD window:
 And all results can be viewed in the browser: 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" />
+
+
+
+
+<h2 align="center">Inference (*experimental*)</h2>
+
+PVTM allows you to easily estimate the topic distribution for unseen documents using `.infer_topics()`. This methods explicitly calls `.get_string_vector`(getting a vector from the input text) and `.get_topic_weights`(probability distribution over all topics) consecutively.  
+
+```python
+topics = pvtm.infer_topics(new_text)
+```
+
+which returns:
+
+```text
+array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
+       1.42747313e-06, 1.67904347e-06, 4.88286876e-03, 2.65966754e-04,
+       2.36464245e-05, 1.11277397e-02, 1.75574895e-05, 1.65568283e-04,
+       1.86956832e-08, 5.60976912e-07, 2.58802897e-02, 2.47131308e-05,
+       7.21725620e-08, 1.10484111e-02, 9.46138567e-01, 3.36056592e-05])
+```
 
 
 

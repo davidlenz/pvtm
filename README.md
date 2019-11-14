@@ -117,7 +117,7 @@ p.save(path="./pvtm_model")
 ```
 Then start the webapp from shell:
 ```
-python pvtm/webapp.py -m ./pvtm_model
+python webapp/webapp.py -m ./pvtm_model
 ```
 
 <img src="img/running the dash app .png" width="600" height="400" />

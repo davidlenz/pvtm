@@ -12,10 +12,9 @@
 
 <h2 align="center">Install</h2>
 
-Via `pip` 
+
 
 ```
-[comment]: <> (pip install git+https://github.com/davidlenz/pvtm)
 git clone https://github.com/davidlenz/pvtm
 cd pvtm
 pip install -r requirements.txt
@@ -27,21 +26,21 @@ pip install -r requirements.txt
 Once **PVTM** is installed, analysis on text documents can be conducted.
 The example below considers texts from different online news, the data can be loaded as follows
 
+
+
 ```python
 from pvtm import pvtm
 texts = pvtm.load_example_data()
+p = pvtm.PVTM(texts)
+_ = p.preprocess(lemmatize = False, lang = 'en', min_df = 0.005)
 ```
+
 `PVTM` object takes a list of strings as input.
 `.preprocess` method offers the possibility to clean (e.g. removal of special characters, number, currency symbols etc.) and lemmatize these strings.
 Parameter `lemmatize` should be set to `True` when documents' texts should be lemmatized. This can lead to improved results but also may take some time depending on the size of the corpus. 
 If the texts should be lemmatized first, corresponding language models should be downloaded from [here](https://spacy.io/usage/models/) and the language parameter should be set, e.g. `lang='en'`. 
 With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. 
 Further, language specific stopwords can be excluded by importing custom stopwords.
-
-```python
-p = pvtm.PVTM(texts)
-_ = p.preprocess(lemmatize = False, lang = 'en', min_df = 0.005)
-```
 
 <h2 align="center">Training</h2>
 

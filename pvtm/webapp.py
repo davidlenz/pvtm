@@ -13,7 +13,7 @@ import errno
 import glob
 import flask
 from dash.dependencies import Input, Output
-from .pvtm import PVTM, Documents
+from pvtm import PVTM, Documents
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()

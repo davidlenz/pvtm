@@ -35,7 +35,8 @@ texts = pvtm.load_example_data()
 `.preprocess` method offers the possibility to clean (e.g. removal of special characters, number, currency symbols etc.) and lemmatize these strings.
 Parameter `lemmatize` should be set to `True` when documents' texts should be lemmatized. This can lead to improved results but also may take some time depending on the size of the corpus. 
 If the texts should be lemmatized first, corresponding language models should be downloaded from [here](https://spacy.io/usage/models/) and the language parameter should be set, e.g. `lang='en'`. 
-With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. Further, language specific stopwords can be excluded by importing your own stopwords list or, for axample, using nlkt library.  
+With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. 
+Further, language specific stopwords can be excluded by importing custom stopwords.
 
 ```python
 p = pvtm.PVTM(texts)

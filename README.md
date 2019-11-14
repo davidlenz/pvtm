@@ -122,7 +122,7 @@ python pvtm/start_webapp.py -m ./pvtm_model
 
 <img src="img/running the dash app .png" width="600" height="400" />
 
-Topics can be viewed in the browser: 
+Topics can be viewed in the browser. The PVTM webapp natively runs on port 8050. 
 
 <img src="https://github.com/davidlenz/pvtm/blob/master/img/dash_app_demo.gif" />
 

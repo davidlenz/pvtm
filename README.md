@@ -38,7 +38,7 @@ If the texts should be lemmatized first, corresponding language models should be
 With the parameters `min_df` and `max_df` the thresholds for very rare/common words, which should not be included in the corpus specific vocabulary, can be set. Further, language specific stopwords can be excluded by importing your own stopwords list or, for axample, using nlkt library.  
 
 ```python
-p = PVTM(texts)
+p = pvtm.PVTM(texts)
 _ = pvtm.preprocess(lemmatize = True, lang = 'en', min_df = 0.005)
 ```
 

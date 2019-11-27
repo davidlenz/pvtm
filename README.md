@@ -18,6 +18,7 @@
 git clone https://github.com/davidlenz/pvtm
 cd pvtm
 pip install -r requirements.txt
+python setup.py install
 ```
 
 <h2 align="center">Getting Started</h2>

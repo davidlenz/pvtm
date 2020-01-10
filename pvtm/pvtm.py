@@ -174,7 +174,7 @@ class PVTM(Documents):
         print('Finished clustering.')
 
         self.doc_vectors = np.array(self.model.docvecs.vectors_docs)
-        self.gmm.fit(self.doc_vectors)
+        self.cluster_memberships = self.gmm.fit_predict(self.doc_vectors)
         self.BIC = self.gmm.bic(self.doc_vectors)
         self.cluster_center = self.gmm.means_
         print('BIC: {}'.format(self.BIC))
@@ -342,7 +342,6 @@ class PVTM(Documents):
         """
         vec = self.get_string_vector(text)
         return self.get_topic_weights(vec, probabilities=probabilities)
-
 
     def save(self, path=None):
         '''

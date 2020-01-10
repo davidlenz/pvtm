@@ -229,9 +229,9 @@ class PVTM(Documents):
             text = " ".join(text)
             wordcloud = WordCloud(max_font_size=50, max_words=n_words, stopwords=stop_words,
                                   background_color="white", mask=shape).generate(text)
-        fig, ax = plt.subplots(figsize=(10, 8))
-        ax.imshow(wordcloud, interpolation="bilinear", )
-        ax.axis("off")
+        #fig, ax = plt.subplots(figsize=(10, 8))
+        #ax.imshow(wordcloud, interpolation="bilinear", )
+        #ax.axis("off")
         if savepath:
             plt.savefig(savepath)
         return wordcloud

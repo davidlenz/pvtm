@@ -16,5 +16,5 @@ setup(
    packages=['pvtm'],  #same as name
    #package_data={'dlutils': ['stopwords.txt']},
    #include_package_data=True,
-#    install_requires=['smtplib', 'email'], #external packages as dependencies
+   #install_requires=['smtplib', 'email'], #external packages as dependencies
 )

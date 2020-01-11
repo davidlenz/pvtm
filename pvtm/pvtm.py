@@ -171,10 +171,11 @@ class PVTM(Documents):
         print('Start clustering..')
         self.gmm = mixture.GaussianMixture(**{key: value for key, value in kwargs.items()
                                               if key in inspect.getfullargspec(mixture.GaussianMixture).args})
-        print('Finished clustering.')
+        
 
         self.doc_vectors = np.array(self.model.docvecs.vectors_docs)
         self.cluster_memberships = self.gmm.fit_predict(self.doc_vectors)
+        print('Finished clustering.')
         self.BIC = self.gmm.bic(self.doc_vectors)
         self.cluster_center = self.gmm.means_
         print('BIC: {}'.format(self.BIC))

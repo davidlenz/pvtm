@@ -182,6 +182,7 @@ class PVTM(Documents):
         self.get_document_topics()
         self.top_topic_center_words = pd.DataFrame(
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
+        self.topic_similarities = pd.DataFrame(np.argsort(cosine_similarity(self.cluster_center))[:, ::-1]).T
 
     def get_string_vector(self, string, steps=100):
         '''

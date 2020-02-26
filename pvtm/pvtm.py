@@ -185,6 +185,63 @@ class PVTM(Documents):
             [self.most_similar_words_per_topic(topic, 200) for topic in range(self.gmm.n_components)])
         self.topic_similarities = pd.DataFrame(np.argsort(cosine_similarity(self.cluster_center))[:, ::-1]).T
 
+    def SelBest(self, arr: list, X: int) -> list:
+        '''
+        returns the set of X configurations with shorter distance
+        '''
+        dx = np.argsort(arr)[:X]
+        return arr[dx]
+    def select_topic_number(self, metric = ['BIC','Silohuette'], iterations = 10):
+        from matplotlib.patches import Ellipse
+        from sklearn.mixture import GaussianMixture as GMM
+        from sklearn import metrics
+        from matplotlib import rcParams
+        rcParams['figure.figsize'] = 16, 8
+        n_clusters = np.arange(2, self.gmm.n_components)
+        if metric == 'Silohuette':
+            sils = []
+            sils_err = []
+            iterations = interations
+            for n in n_clusters:
+                tmp_sil = []
+                for _ in range(iterations):
+                    gmm = GMM(n, n_init=2).fit(self.doc_vectors)
+                    labels = gmm.predict(self.doc_vectors)
+                    sil = metrics.silhouette_score(self.doc_vectors, labels, metric='euclidean')
+                    tmp_sil.append(sil)
+                val = np.mean(self.SelBest(np.array(tmp_sil), int(iterations / 5)))
+                err = np.std(tmp_sil)
+                sils.append(val)
+                sils_err.append(err)
+            plt.errorbar(n_clusters, sils, yerr=sils_err)
+            plt.title("Silhouette Scores", fontsize=20)
+            plt.xticks(n_clusters)
+            plt.xlabel("N. of clusters")
+            plt.ylabel("Score")
+        elif metric == 'BIC':
+            bics = []
+            bics_err = []
+            iterations = iterations
+            for n in n_clusters:
+                tmp_bic = []
+                for _ in range(iterations):
+                    gmm = GMM(n, n_init=2).fit(self.doc_vectors)
+
+                    tmp_bic.append(gmm.bic(self.doc_vectors))
+                val = np.mean(self.SelBest(np.array(tmp_bic), int(iterations / 5)))
+                err = np.std(tmp_bic)
+                bics.append(val)
+                bics_err.append(err)
+            print('The minimal BIC score is reached for ', n_clusters[bics.index(min(bics))])
+            print("Check where the BIC curve's change in slope is big. For this reason, take a look at the gradient values.")
+            plt.errorbar(n_clusters, np.gradient(bics), yerr=bics_err, label='BIC')
+            plt.title("Gradient of BIC Scores", fontsize=20)
+            plt.xticks(n_clusters)
+            plt.xlabel("N. of clusters")
+            plt.ylabel("grad(BIC)")
+            plt.legend()
+
+
     def get_string_vector(self, string, steps=100):
         '''
         The function takes a string (document) and

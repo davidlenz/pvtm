@@ -14,7 +14,7 @@ setup(
    author_email='david.lenz@wi.jlug.de',
    licence='MIT',
    packages=['pvtm'],  #same as name
-   #package_data={'dlutils': ['stopwords.txt']},
+   package_data={'pvtm': ['data/*']},
    #include_package_data=True,
    #install_requires=['smtplib', 'email'], #external packages as dependencies
 )

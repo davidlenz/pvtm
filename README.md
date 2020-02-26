@@ -30,9 +30,8 @@ The example below considers texts from different online news, the data can be lo
 
 
 ```python
-from pvtm import pvtm
-texts = pvtm.load_example_data()
-p = pvtm.PVTM(texts)
+from pvtm import pvtm, example_texts
+p = pvtm.PVTM(example_texts)
 _ = p.preprocess(lemmatize = False, lang = 'en', min_df = 0.005)
 ```
 
@@ -146,7 +145,28 @@ array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
        7.21725620e-08, 1.10484111e-02, 9.46138567e-01, 3.36056592e-05])
 ```
 
+<h2 align="center">References</h2>
 
+If you use these PVTM, please cite the following paper:
+
+Lenz D, Winker P (2020) [*Measuring the diffusion of innovations with paragraph vector topic models.*](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0226685) 
+
+```markup
+@article{10.1371/journal.pone.0226685,
+    author = {Lenz, David AND Winker, Peter},
+    journal = {PLOS ONE},
+    publisher = {Public Library of Science},
+    title = {Measuring the diffusion of innovations with paragraph vector topic models},
+    year = {2020},
+    month = {01},
+    volume = {15},
+    url = {https://doi.org/10.1371/journal.pone.0226685},
+    pages = {1-18},
+    abstract = {Measuring the diffusion of innovations from textual data sources besides patent data has not been studied extensively. However, early and accurate indicators of innovation and the recognition of trends in innovation are mandatory to successfully promote economic growth through technological progress via evidence-based policy making. In this study, we propose Paragraph Vector Topic Model (PVTM) and apply it to technology-related news articles to analyze innovation-related topics over time and gain insights regarding their diffusion process. PVTM represents documents in a semantic space, which has been shown to capture latent variables of the underlying documents, e.g., the latent topics. Clusters of documents in the semantic space can then be interpreted and transformed into meaningful topics by means of Gaussian mixture modeling. In using PVTM, we identify innovation-related topics from 170, 000 technology news articles published over a span of 20 years and gather insights about their diffusion state by measuring the topic importance in the corpus over time. Our results suggest that PVTM is a credible alternative to widely used topic models for the discovery of latent topics in (technology-related) news articles. An examination of three exemplary topics shows that innovation diffusion could be assessed using topic importance measures derived from PVTM. Thereby, we find that PVTM diffusion indicators for certain topics are Granger causal to Google Trend indices with matching search terms.},
+    number = {1},
+    doi = {10.1371/journal.pone.0226685}
+}
+```
 
 <h2 align="center">Troubleshooting</h2>
 

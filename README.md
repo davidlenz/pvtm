@@ -147,7 +147,7 @@ array([1.56368593e-06, 6.37091895e-10, 3.80703376e-04, 5.03966331e-06,
 
 <h2 align="center">References</h2>
 
-If you use these PVTM, please cite the following paper:
+If you use PVTM, please cite the following paper:
 
 Lenz D, Winker P (2020) [*Measuring the diffusion of innovations with paragraph vector topic models.*](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0226685) 
 

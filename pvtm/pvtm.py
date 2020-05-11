@@ -135,9 +135,9 @@ class PVTM(Documents):
         '''
         print('Start lemmatization...')
         t0 = time.time()
-        if lang="en":
+        if lang=="en":
             nlp = spacy.load("en_core_web_sm")
-        if lang="de":
+        if lang=="de":
             nlp = spacy.load("de_core_news_sm")
         nlp.disable_pipes('tagger', 'ner')
         doclist = list(nlp.pipe(texts, n_threads=6, batch_size=500))

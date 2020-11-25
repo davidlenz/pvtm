@@ -173,13 +173,15 @@ Lenz D, Winker P (2020) [*Measuring the diffusion of innovations with paragraph 
 <!--- If you get the following warning message during model training: --->
 
 <!--- |:warning: **User Warning**: C extension not loaded, training will be slow. Install a C compiler and reinstall gensim for     fast training. "C extension not loaded, training will be slow."| --->
-| --- |
+<!--- | --- | --->
 
 <!--- just run:--->
 
-```
-<!--- conda install -c conda-forge gensim --->
-```
+<!---```--->
+ <!--- conda install -c conda-forge gensim --->
+<!---```--->
+
+
 <h2 align="center">License</h2>
 
 MIT License https://en.wikipedia.org/wiki/MIT_License

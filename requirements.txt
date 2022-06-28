@@ -18,7 +18,7 @@ setuptools==41.4.0
 Pillow==9.0.0
 PyPDF2==1.27.5
 langdetect==1.0.7
-reportlab==3.5.32
+reportlab==3.5.55
 scikit_learn==0.21.3
 stop_words==2018.7.23
 svglib==0.9.4

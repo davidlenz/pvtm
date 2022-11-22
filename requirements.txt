@@ -15,7 +15,7 @@ Flask==1.1.1
 spacy==2.1.8
 requests==2.21.0
 setuptools==41.4.0
-Pillow==9.0.1
+Pillow==9.3.0
 PyPDF2==1.27.5
 langdetect==1.0.7
 reportlab==3.5.55
